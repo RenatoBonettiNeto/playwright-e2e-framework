@@ -1,0 +1,29 @@
+{
+  "name": "playwright-e2e-framework",
+  "version": "1.0.0",
+  "description": "End-to-end test automation framework built with Playwright, showcasing scalable architecture, QA best practices, and real-world testing scenarios.",
+  "homepage": "https://github.com/RenatoBonettiNeto/playwright-e2e-framework#readme",
+  "bugs": {
+    "url": "https://github.com/RenatoBonettiNeto/playwright-e2e-framework/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RenatoBonettiNeto/playwright-e2e-framework.git"
+  },
+  "license": "ISC",
+  "author": "Renato Bonetti Neto",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.5.0",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "zod": "^4.4.3"
+  }
+}
