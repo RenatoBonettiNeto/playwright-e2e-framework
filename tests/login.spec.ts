@@ -7,13 +7,17 @@ test.describe("Login Recruiter", () => {
     const loginPage = new LoginPage(page);
 
     await loginPage.login(validRecruiter);
+
+    await expect(page).toHaveURL(/homepage.html/);
   });
 });
 
 test.describe("Login Collaborator", () => {
-  test("Deve permitir que o colaborador faça login com sucesso", async ({ page }) => {
+  test("Deve impedir login do colaborador sem liberação", async ({ page }) => {
     const loginPage = new LoginPage(page);
 
     await loginPage.login(validCollaborator);
+
+    await loginPage.validarMensagemAguardandoLiberacao();
   });
 });

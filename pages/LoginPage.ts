@@ -27,17 +27,21 @@ export class LoginPage {
     await this.page.getByRole("button", { name: "Realizar Login!" }).click();
   }
 
-   async validarRedirecionamentoHomePage() {
-    await expect(this.page).toHaveURL(/homepage.html/);
+  async validarMensagemAguardandoLiberacao() {
+    await expect(this.page.locator("#mensagem")).toContainText(
+      "Nao foi possivel realizar o login.",
+    );
+
+    await expect(this.page.locator("#mensagem")).toContainText(
+      "Aguarde liberacao do recrutador.",
+    );
   }
 
-    async login(user: User) {
+  async login(user: User) {
     await this.acessar();
     await this.selecionarTipoUsuario(user.type);
     await this.preencherUsuario(user.name);
     await this.preencherSenha(user.password);
     await this.clicarBotaoRealizarLogin();
-    await this.validarRedirecionamentoHomePage();
   }
-
 }
