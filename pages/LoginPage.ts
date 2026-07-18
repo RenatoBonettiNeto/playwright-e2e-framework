@@ -20,7 +20,7 @@ export class LoginPage {
   }
 
   async preencherSenha(senha: string) {
-    await this.page.getByPlaceholder("Senha").fill(senha);
+    await this.page.getByPlaceholder("Senha:").fill(senha);
   }
 
   async clicarBotaoRealizarLogin() {
