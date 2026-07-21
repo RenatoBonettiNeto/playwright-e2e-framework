@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 export class UserApi {
   static async create(request: APIRequestContext, user: User) {
     const response = await request.post(
-      `${process.env.API_URL}/usuarios/register`,
+      `${process.env.API_URL}usuarios/register`,
       {
         data: {
           nome: user.name,
