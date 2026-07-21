@@ -1,22 +1,30 @@
 import { test, expect } from "@playwright/test";
 import { LoginPage } from "../pages/LoginPage";
-import { validCollaborator, validRecruiter } from "../fixtures/user";
+import { createCollaborator, createRecruiter } from "../fixtures/user";
+import { UserApi } from "../helpers/api/userApi";
 
-test.describe("Login Recruiter", () => {
-  test("Deve permitir que o recrutador faça login com sucesso", async ({ page }) => {
-    const loginPage = new LoginPage(page);
+test("Deve permitir login do recrutador", async ({ page, request }) => {
+  const recruiter = createRecruiter();
 
-    await loginPage.login(validRecruiter);
+  await UserApi.create(request, recruiter);
 
-    await expect(page).toHaveURL(/homepage.html/);
-  });
+  const loginPage = new LoginPage(page);
+
+  await loginPage.login(recruiter);
+
+  await expect(page).toHaveURL(/homepage.html/);
 });
 
 test.describe("Login Collaborator", () => {
-  test("Deve impedir login do colaborador sem liberação", async ({ page }) => {
+  test("Deve impedir login do colaborador sem liberação", async ({ page, request }) => {
+    
+    const collaborator = createCollaborator();
+
+    await UserApi.create(request, collaborator);
+    
     const loginPage = new LoginPage(page);
 
-    await loginPage.login(validCollaborator);
+    await loginPage.login(collaborator);
 
     await loginPage.validarMensagemAguardandoLiberacao();
   });

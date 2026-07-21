@@ -1,5 +1,7 @@
+import { faker } from "@faker-js/faker";
+
 export enum UserType {
-  Collabortor = "C",
+  Collaborator = "C",
   Recruiter = "R",
 }
 
@@ -11,18 +13,22 @@ export interface User {
   confirmPassword: string;
 }
 
-export const validCollaborator: User = {
-  type: UserType.Collabortor,
-  name: "RenatoTeste",
-  email: "renato@email.com.br",
-  password: "12345678",
-  confirmPassword: "12345678",
-};
+export function createRecruiter(): User {
+  return {
+    type: UserType.Recruiter,
+    name: faker.internet.username(),
+    email: faker.internet.email(),
+    password: "12345678",
+    confirmPassword: "12345678",
+  };
+}
 
-export const validRecruiter: User = {
-  type: UserType.Recruiter,
-  name: "RH Empresa",
-  email: "rh@email.com.br",
-  password: "12345678",
-  confirmPassword: "12345678",
-};
+export function createCollaborator(): User {
+  return {
+    type: UserType.Collaborator,
+    name: faker.internet.username(),
+    email: faker.internet.email(),
+    password: "12345678",
+    confirmPassword: "12345678",
+  };
+}
