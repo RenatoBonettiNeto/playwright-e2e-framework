@@ -34,9 +34,6 @@ export class RegisterPage {
     await this.page.getByRole("button", { name: "Registrar-se" }).click();
   }
 
-  async validarRedirecionamentoLogin() {
-    await expect(this.page).toHaveURL(/login.html/);
-  }
 
   async register(user: User) {
     await this.acessar();
@@ -46,6 +43,6 @@ export class RegisterPage {
     await this.preencherSenha(user.password);
     await this.preencherConfirmarSenha(user.confirmPassword);
     await this.clicarBotaoRegistrar();
-    await this.validarRedirecionamentoLogin();
   }
 }
+

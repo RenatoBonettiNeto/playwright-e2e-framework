@@ -32,3 +32,29 @@ export function createCollaborator(): User {
     confirmPassword: "12345678",
   };
 }
+
+export function createInvalidEmailUser(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    email: "email-invalido",
+  };
+}
+
+export function createInvalidPasswordUser(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    password: "1234",
+    confirmPassword: "1234",
+  };
+}
+
+export function createInvalidDoNotCorrespondPasswordUser(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    password: "12345678",
+    confirmPassword: "1234",
+  };
+}
