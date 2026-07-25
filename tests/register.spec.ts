@@ -9,7 +9,7 @@ import {
 } from "../fixtures/user";
 import { UserApi } from "../helpers/api/userApi";
 
-test.describe("Register Recruiter", () => {
+test.describe("Happy Path", () => {
   test("Deve cadastrar um recrutador com sucesso", async ({
     page,
     request,
@@ -22,9 +22,7 @@ test.describe("Register Recruiter", () => {
 
     await expect(page).toHaveURL(/login.html/);
   });
-});
 
-test.describe("Register Collaborator", () => {
   test("Deve cadastrar um colaborador com sucesso", async ({ page }) => {
     const collaborator = createCollaborator();
 
@@ -36,7 +34,7 @@ test.describe("Register Collaborator", () => {
   });
 });
 
-test.describe("Invalid data", () => {
+test.describe("Validation", () => {
   test("Não deve permitir registrar usuário com e-mail inválido.", async ({
     page,
   }) => {
@@ -81,4 +79,8 @@ test.describe("Invalid data", () => {
 
     await expect(page).toHaveURL(/register.html/);
   });
+});
+
+test.describe("Business Rules", () => {
+  
 });
