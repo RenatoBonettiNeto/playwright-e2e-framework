@@ -58,3 +58,35 @@ export function createInvalidDoNotCorrespondPasswordUser(): User {
     confirmPassword: "1234",
   };
 }
+
+export function createInvalidUnpopulatedUser(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    name: "",
+  };
+}
+
+export function createInvalidUnpopulatedEmail(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    email: "",
+  };
+}
+
+export function createInvalidUnpopulatedPassword(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    password: "",
+  };
+}
+
+export function createInvalidUnpopulatedConfirmPassword(): User {
+  const user = createRecruiter();
+  return {
+    ...user,
+    confirmPassword: "",
+  };
+}
