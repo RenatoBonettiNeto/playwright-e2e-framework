@@ -44,8 +44,8 @@ test.describe("Validation", () => {
 
     await registerPage.register(user);
 
-    await expect(page.locator("#mensagem")).toContainText("E-mail invalido!");
-    await expect(page).toHaveURL(/register.html/);
+    await registerPage.expectErrorMessage("E-mail invalido!");
+    await registerPage.expectStayOnRegisterPage();
   });
 
   test("Não deve permitir registrar usuário cuja senha indicada tenha menos de 8 caracteres.", async ({
@@ -57,11 +57,11 @@ test.describe("Validation", () => {
 
     await registerPage.register(user);
 
-    await expect(page.locator("#mensagem")).toContainText(
+    await registerPage.expectErrorMessage(
       "A senha deve ter pelo menos 8 caracteres!",
     );
 
-    await expect(page).toHaveURL(/register.html/);
+    await registerPage.expectStayOnRegisterPage();
   });
 
   test("Não deve permitir registrar usuário cujas senhas não correspondem.", async ({
@@ -73,14 +73,10 @@ test.describe("Validation", () => {
 
     await registerPage.register(user);
 
-    await expect(page.locator("#mensagem")).toContainText(
-      "As senhas não coincidem!",
-    );
+    await registerPage.expectErrorMessage("As senhas não coincidem!");
 
-    await expect(page).toHaveURL(/register.html/);
+    await registerPage.expectStayOnRegisterPage();
   });
 });
 
-test.describe("Business Rules", () => {
-  
-});
+test.describe("Business Rules", () => {});

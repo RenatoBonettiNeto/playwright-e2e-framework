@@ -33,8 +33,6 @@ export class RegisterPage {
   async clicarBotaoRegistrar() {
     await this.page.getByRole("button", { name: "Registrar-se" }).click();
   }
-
-
   async register(user: User) {
     await this.acessar();
     await this.selecionarTipoUsuario(user.type);
@@ -44,5 +42,12 @@ export class RegisterPage {
     await this.preencherConfirmarSenha(user.confirmPassword);
     await this.clicarBotaoRegistrar();
   }
-}
 
+  async expectErrorMessage(message: string) {
+    await expect(this.page.locator("#mensagem")).toContainText(message);
+  }
+
+  async expectStayOnRegisterPage() {
+    await expect(this.page).toHaveURL(/register.html/);
+  }
+}
