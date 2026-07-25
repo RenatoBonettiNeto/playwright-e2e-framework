@@ -102,4 +102,18 @@ test.describe("Validation", () => {
   });
 });
 
-test.describe("Business Rules", () => {});
+test.describe("Business Rules", () => {
+  test("Não deve permitir registrar novo usuário com e-mail já cadastrado.", async ({
+    page,
+    request,
+  }) => {
+    const user = createRecruiter();
+    const registerPage = new RegisterPage(page);
+    await UserApi.create(request, user);
+    await registerPage.register(user);
+    await registerPage.expectErrorMessage(
+      "Nome de usuario ou e-mail ja cadastrado.",
+    );
+    await registerPage.expectStayOnRegisterPage();
+  });
+});
