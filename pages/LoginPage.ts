@@ -31,6 +31,10 @@ export class LoginPage extends BasePage {
     await this.expectErrorMessage("Aguarde liberacao do recrutador.");
   }
 
+    async expectStayOnLoginPage() {
+    await expect(this.page).toHaveURL(/login.html/);
+  }
+
   async login(user: User) {
     await this.acessar();
     await this.selecionarTipoUsuario(user.type);
