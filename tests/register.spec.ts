@@ -2,14 +2,14 @@ import { test, expect } from "@playwright/test";
 import { RegisterPage } from "../pages/RegisterPage";
 import {
   createCollaborator,
-  createInvalidEmailUser,
-  createInvalidPasswordUser,
+  createUserWithInvalidEmail,
+  createUserWithShortPassword,
   createRecruiter,
-  createInvalidDoNotCorrespondPasswordUser,
-  createInvalidUnpopulatedUser,
-  createInvalidUnpopulatedEmail,
-  createInvalidUnpopulatedPassword,
-  createInvalidUnpopulatedConfirmPassword,
+  createUserWithDifferentPasswords,
+  createUserWithoutName,
+  createUserWithoutEmail,
+  createUserWithoutPassword,
+  createUserWithoutConfirmPassword,
 } from "../fixtures/user";
 import { UserApi } from "../helpers/api/userApi";
 
@@ -36,7 +36,7 @@ test.describe("Validation", () => {
   test("Não deve permitir registrar usuário com e-mail inválido.", async ({
     page,
   }) => {
-    const user = createInvalidEmailUser();
+    const user = createUserWithInvalidEmail();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage("E-mail invalido!");
@@ -46,7 +46,7 @@ test.describe("Validation", () => {
   test("Não deve permitir registrar usuário cuja senha indicada tenha menos de 8 caracteres.", async ({
     page,
   }) => {
-    const user = createInvalidPasswordUser();
+    const user = createUserWithShortPassword();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage(
@@ -58,7 +58,7 @@ test.describe("Validation", () => {
   test("Não deve permitir registrar usuário cujas senhas não correspondem.", async ({
     page,
   }) => {
-    const user = createInvalidDoNotCorrespondPasswordUser();
+    const user = createUserWithDifferentPasswords();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage("As senhas não coincidem!");
@@ -66,7 +66,7 @@ test.describe("Validation", () => {
   });
 
   test("Não deve permitir criar um usuário sem nome", async ({ page }) => {
-    const user = createInvalidUnpopulatedUser();
+    const user = createUserWithoutName();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage("Nome de usuário é obrigatório!");
@@ -74,7 +74,7 @@ test.describe("Validation", () => {
   });
 
   test("Não deve permitir criar um usuário sem email", async ({ page }) => {
-    const user = createInvalidUnpopulatedEmail();
+    const user = createUserWithoutEmail();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage("Email é obrigatório!");
@@ -82,7 +82,7 @@ test.describe("Validation", () => {
   });
 
   test("Não deve permitir criar um usuário sem senha", async ({ page }) => {
-    const user = createInvalidUnpopulatedPassword();
+    const user = createUserWithoutPassword();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage("Senha é obrigatório!");
@@ -92,7 +92,7 @@ test.describe("Validation", () => {
   test("Não deve permitir criar um usuário sem confirmação de senha", async ({
     page,
   }) => {
-    const user = createInvalidUnpopulatedConfirmPassword();
+    const user = createUserWithoutConfirmPassword();
     const registerPage = new RegisterPage(page);
     await registerPage.register(user);
     await registerPage.expectErrorMessage(

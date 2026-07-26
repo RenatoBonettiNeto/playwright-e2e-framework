@@ -33,7 +33,7 @@ export function createCollaborator(): User {
   };
 }
 
-export function createInvalidEmailUser(): User {
+export function createUserWithInvalidEmail(): User {
   const user = createRecruiter();
   return {
     ...user,
@@ -41,7 +41,7 @@ export function createInvalidEmailUser(): User {
   };
 }
 
-export function createInvalidPasswordUser(): User {
+export function createUserWithShortPassword(): User {
   const user = createRecruiter();
   return {
     ...user,
@@ -50,7 +50,7 @@ export function createInvalidPasswordUser(): User {
   };
 }
 
-export function createInvalidDoNotCorrespondPasswordUser(): User {
+export function createUserWithDifferentPasswords(): User {
   const user = createRecruiter();
   return {
     ...user,
@@ -59,7 +59,7 @@ export function createInvalidDoNotCorrespondPasswordUser(): User {
   };
 }
 
-export function createInvalidUnpopulatedUser(): User {
+export function createUserWithoutName(): User {
   const user = createRecruiter();
   return {
     ...user,
@@ -67,7 +67,7 @@ export function createInvalidUnpopulatedUser(): User {
   };
 }
 
-export function createInvalidUnpopulatedEmail(): User {
+export function createUserWithoutEmail(): User {
   const user = createRecruiter();
   return {
     ...user,
@@ -75,7 +75,7 @@ export function createInvalidUnpopulatedEmail(): User {
   };
 }
 
-export function createInvalidUnpopulatedPassword(): User {
+export function createUserWithoutPassword(): User {
   const user = createRecruiter();
   return {
     ...user,
@@ -83,10 +83,11 @@ export function createInvalidUnpopulatedPassword(): User {
   };
 }
 
-export function createInvalidUnpopulatedConfirmPassword(): User {
+export function createUserWithoutConfirmPassword(): User {
   const user = createRecruiter();
   return {
     ...user,
     confirmPassword: "",
   };
 }
+
