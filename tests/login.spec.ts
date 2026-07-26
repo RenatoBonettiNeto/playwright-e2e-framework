@@ -26,6 +26,6 @@ test.describe("Login Collaborator", () => {
 
     await loginPage.login(collaborator);
 
-    await loginPage.validarMensagemAguardandoLiberacao();
+    await loginPage.expectPendingApprovalError();
   });
 });

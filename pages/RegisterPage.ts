@@ -1,9 +1,8 @@
 import { Page, expect } from "@playwright/test";
 import { User, UserType } from "../fixtures/user";
+import { BasePage } from "./BasePage";
 
-export class RegisterPage {
-  constructor(private page: Page) {}
-
+export class RegisterPage extends BasePage {
   private roleButton = (role: UserType) =>
     this.page.locator(`[data-role="${role}"]`);
 
@@ -27,7 +26,9 @@ export class RegisterPage {
   }
 
   async preencherConfirmarSenha(confirmarSenha: string) {
-    await this.page.locator('input[name="confirm-password"]').fill(confirmarSenha);
+    await this.page
+      .locator('input[name="confirm-password"]')
+      .fill(confirmarSenha);
   }
 
   async clicarBotaoRegistrar() {
@@ -41,10 +42,6 @@ export class RegisterPage {
     await this.preencherSenha(user.password);
     await this.preencherConfirmarSenha(user.confirmPassword);
     await this.clicarBotaoRegistrar();
-  }
-
-  async expectErrorMessage(message: string) {
-    await expect(this.page.locator("#mensagem")).toContainText(message);
   }
 
   async expectStayOnRegisterPage() {

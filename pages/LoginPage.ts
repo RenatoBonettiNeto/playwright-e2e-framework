@@ -1,9 +1,8 @@
 import { Page, expect } from "@playwright/test";
 import { User, UserType } from "../fixtures/user";
+import { BasePage } from "./BasePage";
 
-export class LoginPage {
-  constructor(private page: Page) {}
-
+export class LoginPage extends BasePage {
   private roleButton = (role: UserType) =>
     this.page.locator(`[data-role="${role}"]`);
 
@@ -27,14 +26,9 @@ export class LoginPage {
     await this.page.getByRole("button", { name: "Realizar Login!" }).click();
   }
 
-  async validarMensagemAguardandoLiberacao() {
-    await expect(this.page.locator("#mensagem")).toContainText(
-      "Nao foi possivel realizar o login.",
-    );
-
-    await expect(this.page.locator("#mensagem")).toContainText(
-      "Aguarde liberacao do recrutador.",
-    );
+  async expectPendingApprovalError() {
+    await this.expectErrorMessage("Nao foi possivel realizar o login.");
+    await this.expectErrorMessage("Aguarde liberacao do recrutador.");
   }
 
   async login(user: User) {
