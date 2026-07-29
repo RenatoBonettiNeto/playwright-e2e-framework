@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { LoginPage } from "../pages/LoginPage";
+import { LoginPage } from "../../pages/LoginPage";
 import {
   createCollaborator,
   createRecruiter,
   createUserWithoutName,
   createUserWithoutPassword,
-} from "../fixtures/user";
-import { UserApi } from "../helpers/api/userApi";
+} from "../../fixtures/user";
+import { UserApi } from "../../helpers/api/userApi";
 
 test.describe("Happy Path", () => {
   test("Deve permitir login do recrutador", async ({ page, request }) => {

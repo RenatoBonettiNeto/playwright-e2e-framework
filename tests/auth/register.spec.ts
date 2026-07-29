@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { RegisterPage } from "../pages/RegisterPage";
+import { RegisterPage } from "../../pages/RegisterPage";
 import {
   createCollaborator,
   createUserWithInvalidEmail,
@@ -10,8 +10,8 @@ import {
   createUserWithoutEmail,
   createUserWithoutPassword,
   createUserWithoutConfirmPassword,
-} from "../fixtures/user";
-import { UserApi } from "../helpers/api/userApi";
+} from "../../fixtures/user";
+import { UserApi } from "../../helpers/api/userApi";
 
 test.describe("Happy Path", () => {
   test("Deve cadastrar um recrutador com sucesso", async ({
