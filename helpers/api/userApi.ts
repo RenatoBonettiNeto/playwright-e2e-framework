@@ -16,6 +16,13 @@ export class UserApi {
       },
     );
 
+    if (!response.ok()) {
+      throw new Error(`
+      Login falhou.
+      Status: ${response.status()}
+      Resposta: ${await response.text()}
+`);
+    }
     expect(response.status()).toBe(201);
   }
 }
