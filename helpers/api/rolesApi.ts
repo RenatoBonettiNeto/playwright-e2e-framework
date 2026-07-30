@@ -1,5 +1,6 @@
 import { APIRequestContext } from "@playwright/test";
 import { Role } from "../../fixtures/role";
+import dotenv from "dotenv";
 
 export class RolesApi {
   async create(request: APIRequestContext, role: Role) {
