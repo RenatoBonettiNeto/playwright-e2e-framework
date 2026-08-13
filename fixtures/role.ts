@@ -5,9 +5,10 @@ export interface Role {
     requisitos_minimos: string,
     requisitos_desejaveis: string
     objetivos: string
+    departamento_id: number
 }
 
-export function createRole(): Role {
+export function createRole(departmentId: number): Role {
   return {
     nome: "Cargo",
     descricao: "CG",
@@ -15,5 +16,6 @@ export function createRole(): Role {
     requisitos_minimos: "Teste",
     requisitos_desejaveis: "Teste",
     objetivos: "Teste",
+    departamento_id: departmentId,
   };
 }
