@@ -2,7 +2,7 @@ import { Page, expect } from "@playwright/test";
 import { Department } from "../fixtures/department";
 import { BasePage } from "./BasePage";
 
-export class DepartmentModal extends BasePage {
+export class DepartmentPage extends BasePage {
   async open() {
     await this.page.goto("departments.html");
   }
