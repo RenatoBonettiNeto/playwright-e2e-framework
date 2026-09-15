@@ -1,5 +1,6 @@
 .env
 node_modules
+/tests/rawTests
 
 # Playwright
 /test-results/
@@ -7,3 +8,4 @@ node_modules
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
