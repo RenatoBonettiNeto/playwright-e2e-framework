@@ -12,7 +12,7 @@ export class RolesApi {
         requisitos_minimos: role.requisitos_minimos,
         requisitos_desejaveis: role.requisitos_desejaveis,
         objetivos: role.objetivos,
-        departamento: role.departamento_id
+        departamento_id: role.departamento_id,
       },
     });
 
