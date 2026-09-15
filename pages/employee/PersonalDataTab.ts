@@ -10,12 +10,11 @@ export class PersonalDataTab {
   private get cpf() {
     return this.page.locator("#input-cpf");
   }
-  private get DateOfBirth() {
+  private get dateOfBirth() {
     return this.page.locator("#input-data-nascimento");
   }
   async preencherDataNascimento(data: string) {
-    await this.DateOfBirth.click();
-    await this.DateOfBirth.pressSequentially(data);
+    await this.dateOfBirth.fill(data);
   }
   private get gender() {
     return this.page.locator("#input-genero");
@@ -24,8 +23,7 @@ export class PersonalDataTab {
   async fill(employee: Employee) {
     await this.fullName.fill(employee.nomeCompleto);
     await this.cpf.fill(employee.cpf);
-    await this.DateOfBirth.click();
-    await this.DateOfBirth.pressSequentially(employee.dataNascimento)
+    await this.preencherDataNascimento(employee.dataNascimento);
     await this.gender.fill(employee.genero);
   }
 }
