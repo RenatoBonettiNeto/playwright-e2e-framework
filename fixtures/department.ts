@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 export interface Department {
   name: string;
   sigla: string;
@@ -11,10 +13,10 @@ export interface Department {
 
 export function createDepartment(): Department {
   return {
-    name: "Departamento",
+    name: `Departamento ${faker.string.uuid()}`,
     sigla: "DP",
     descricao: "Teste de inclusão do departamento.",
-    departamento_pai: "1",
+    departamento_pai: "",
     email_setorial: "departamento@rh.com.br",
     localizacao: "Braço do Norte, Santa Catarina",
     missao: "Criar o departamento.",

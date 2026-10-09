@@ -8,6 +8,7 @@ import { DepartmentsApi } from "../helpers/api/departmentApi";
 import { createDepartment } from "../fixtures/department";
 import { createRole } from "../fixtures/role";
 import { authenticate } from "../helpers/authentication";
+import { RecordQueryApi } from "../helpers/api/recordQueryApi";
 
 test("Deve ser possível criar o funcionário com sucesso", async ({
   page,
@@ -47,13 +48,8 @@ test("Deve ser possível criar o funcionário com sucesso", async ({
   expect(response.status()).toBe(201);
   const { data: createdEmployee } = await response.json();
 
-  const savedResponse = await request.get(
-    `${process.env.API_URL}funcionarios/${createdEmployee.id_funcionario}`,
-  );
-  expect(savedResponse.ok()).toBeTruthy();
-  const { data: savedEmployee } = await savedResponse.json();
-
-  expect(savedEmployee).toMatchObject({
+  const employeeQueryApi = new RecordQueryApi("funcionarios");
+  const savedEmployee = await employeeQueryApi.expectRecord(request, createdEmployee.id_funcionario, {
     nome_completo: employee.nomeCompleto,
     cpf: employee.cpf,
     data_nascimento: employee.dataNascimento,
@@ -79,15 +75,13 @@ test("Deve ser possível criar o funcionário com sucesso", async ({
   expect(savedEmployee.matricula).toEqual(expect.any(String));
   expect(savedEmployee.matricula.length).toBeGreaterThan(0);
 
-  await employeePage.search(employee.emailCorporativo);
-  const employeeRow = employeePage.getEmployeeRow(employee.emailCorporativo);
-  for (const value of [
-    savedEmployee.matricula,
-    employee.nomeCompleto,
-    department.nome,
-    role.nome,
-    employee.status,
-  ]) {
-    await expect(employeeRow.getByRole("cell", { name: value, exact: true })).toBeVisible();
-  }
+  await employeePage.query.search(employee.emailCorporativo);
+  await employeePage.query.expectRecord(employee.emailCorporativo, {
+    "Matrícula": savedEmployee.matricula,
+    "Nome": employee.nomeCompleto,
+    "E-mail corporativo": employee.emailCorporativo,
+    "Departamento": department.nome,
+    "Cargo": role.nome,
+    "Status": employee.status,
+  });
 });

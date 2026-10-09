@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 export interface Role {
     nome: string,
     descricao: string,
@@ -14,7 +16,7 @@ export interface Role {
 
 export function createRole(departmentId: number): Role {
   return {
-    nome: "Cargo",
+    nome: `Cargo ${faker.string.uuid()}`,
     descricao: "Teste de inclusão de cargo",
     jornada: "40H",
     requisitos_minimos: "Teste",

@@ -16,6 +16,10 @@ O objetivo é evoluir continuamente este framework, aplicando boas práticas de 
 
 ## 🏗️ Arquitetura
 
+### Consultas reutilizáveis
+
+O [guia de consultas após o cadastro](docs/record-queries.md) apresenta `RecordQueryPage` (busca e validação por coluna na tela), `RecordQueryApi` (consulta por ID e validação dos dados persistidos), exemplos de uso e a análise das telas do tcc-app.
+
 O framework foi desenvolvido seguindo o padrão **Page Object Model (POM)**, separando responsabilidades entre páginas, testes, preparação de dados e fixtures.
 
 ```text

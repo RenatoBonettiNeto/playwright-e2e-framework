@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
+import { RecordQueryPage } from "./RecordQueryPage";
 import { EmployeeModal } from "./employee/EmployeeModal";
 import { OrganizationalBondTab } from "./employee/OrganizationalBondTab";
 import { PersonalDataTab } from "./employee/PersonalDataTab";
@@ -11,6 +12,7 @@ import { LocationTab } from "./employee/LocationTab";
 import { ObservationsTab } from "./employee/ObservationsTab";
 
 export class EmployeePage extends BasePage {
+  readonly query: RecordQueryPage;
   readonly employeeModal: EmployeeModal;
   readonly personalDataTab: PersonalDataTab;
   readonly organizationalBondTab: OrganizationalBondTab;
@@ -22,6 +24,7 @@ export class EmployeePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
+    this.query = new RecordQueryPage(page, "employees");
 
     this.employeeModal = new EmployeeModal(page);
     this.personalDataTab = new PersonalDataTab(page);
@@ -34,7 +37,7 @@ export class EmployeePage extends BasePage {
   }
 
   async open() {
-    await this.page.goto("employees.html");
+    await this.query.open();
   }
 
   async clickButtonNewEmployee() {
@@ -46,13 +49,11 @@ export class EmployeePage extends BasePage {
   }
 
   async search(email: string) {
-    await this.page.getByRole("searchbox", { name: "Busca", exact: true }).fill(email);
+    await this.query.search(email);
   }
 
   getEmployeeRow(email: string) {
-    return this.page.locator("#employees-table-body tr").filter({
-      has: this.page.getByRole("cell", { name: email, exact: true }),
-    });
+    return this.query.getRecordRow(email);
   }
 
   async create(employee: Employee) {

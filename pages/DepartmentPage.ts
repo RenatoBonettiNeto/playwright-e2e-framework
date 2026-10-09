@@ -1,10 +1,18 @@
 import { Page, expect } from "@playwright/test";
 import { Department } from "../fixtures/department";
 import { BasePage } from "./BasePage";
+import { RecordQueryPage } from "./RecordQueryPage";
 
 export class DepartmentPage extends BasePage {
+  readonly query: RecordQueryPage;
+
+  constructor(page: Page) {
+    super(page);
+    this.query = new RecordQueryPage(page, "departments");
+  }
+
   async open() {
-    await this.page.goto("departments.html");
+    await this.query.open();
   }
 
   async clickButtonNewDepartment() {

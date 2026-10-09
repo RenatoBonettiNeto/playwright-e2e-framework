@@ -1,9 +1,18 @@
+import { Page } from "@playwright/test";
 import { BasePage } from "./BasePage";
+import { RecordQueryPage } from "./RecordQueryPage";
 import { Role } from "../fixtures/role";
 
 export class RolePage extends BasePage {
+  readonly query: RecordQueryPage;
+
+  constructor(page: Page) {
+    super(page);
+    this.query = new RecordQueryPage(page, "roles");
+  }
+
   async open() {
-    await this.page.goto("roles.html");
+    await this.query.open();
   }
 
   async clickButtonNewRole() {
