@@ -1,6 +1,6 @@
 .env
 node_modules
-/tests/rawTests
+/rawTests
 
 # Playwright
 /test-results/
