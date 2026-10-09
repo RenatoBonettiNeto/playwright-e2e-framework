@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { UserApi } from "../helpers/api/userApi";
 import { authenticate } from "../helpers/authentication";
 import { createRecruiter } from "../fixtures/user";
-import { createDepartment } from "../fixtures/department";
+import { createDepartment, createDepartmentOnlyWithName, createDepartmentWithNameContainingOnlySpaces, createDepartmentWithoutName } from "../fixtures/department";
 import { DepartmentPage } from "../pages/DepartmentPage";
 import { RecordQueryApi } from "../helpers/api/recordQueryApi";
 
@@ -51,3 +51,37 @@ test("Deve permitir cadastrar o departamento com sucesso", async ({
     "Status": "Ativo",
   });
 });
+
+test("Deve permitir cadastrar o departamento com somente o nome.", async ({ page, request, context }) => {
+  const recruiter = createRecruiter();
+  await UserApi.create(request, recruiter);
+  await authenticate(request, context, recruiter);
+
+  const departmentPage = new DepartmentPage(page);
+  const department = createDepartmentOnlyWithName();
+  await departmentPage.create(department),
+  await expect(page.locator("#mensagem")).toHaveText("Departamento criado com sucesso.");
+})
+
+
+test("Não deve permitir cadastrar o departamento sem nome.", async ({ page, request, context }) => {
+  const recruiter = createRecruiter();
+  await UserApi.create(request, recruiter);
+  await authenticate(request, context, recruiter);
+
+  const departmentPage = new DepartmentPage(page);
+  const department = createDepartmentWithoutName();
+  await departmentPage.create(department),
+  await expect(page.locator("#mensagem")).toHaveText("O nome do departamento é obrigatório.");
+})
+
+test("Não deve permtir cadastrar o departamento com o nome contento apenas espaços.", async ({ page, request, context }) => {
+  const recruiter = createRecruiter();
+  await UserApi.create(request, recruiter);
+  await authenticate(request, context, recruiter);
+
+  const departmentPage = new DepartmentPage(page);
+  const department = createDepartmentWithNameContainingOnlySpaces();
+  await departmentPage.create(department),
+  await expect(page.locator("#mensagem")).toHaveText("O nome do departamento é obrigatório.");
+})
