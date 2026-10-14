@@ -62,3 +62,16 @@ export function createDepartmentWithNameContainingOnlySpaces(): Department {
     objetivos: "Criar o departamento.",
   };
 }
+
+export function createDepartmentWithNameWhitespace(): Department {
+  return {
+    name: `   Departamento com espaços ${faker.string.uuid()}   `,
+    sigla: "DP",
+    descricao: "Teste de inclusão do departamento.",
+    departamento_pai: "",
+    email_setorial: "departamento@rh.com.br",
+    localizacao: "Braço do Norte, Santa Catarina",
+    missao: "Criar o departamento.",
+    objetivos: "Criar o departamento.",
+  };
+}
