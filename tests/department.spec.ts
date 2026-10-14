@@ -124,4 +124,22 @@ test.describe("Regras de Negócio", () => {
       expectedDepartment,
     );
   });
+
+  test("Não deve cadastrar o departamento ao cancelar o formulário", async ({
+    page,
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment();
+
+    await departmentPage.cancelCreation(department);
+
+    await expect(page.locator("#department-modal")).toBeHidden();
+
+    await departmentPage.query.search(department.name);
+    await expect(page.locator("#departments-empty-state")).toBeVisible();
+
+    await expect(
+      departmentPage.query.getRecordRow(department.name),
+    ).toHaveCount(0);
+  });
 });

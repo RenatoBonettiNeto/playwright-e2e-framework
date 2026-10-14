@@ -59,6 +59,14 @@ export class DepartmentPage extends BasePage {
       .click();
   }
 
+  async clickCancel() {
+    await this.page
+      .getByRole("button", {
+        name: "Cancelar",
+      })
+      .click();
+  }
+
   async create(department: Department) {
     await this.open();
     await this.clickButtonNewDepartment();
@@ -70,5 +78,18 @@ export class DepartmentPage extends BasePage {
     await this.fillMission(department.missao);
     await this.fillObjectives(department.objetivos);
     await this.clickSave();
+  }
+
+  async cancelCreation(department: Department) {
+    await this.open();
+    await this.clickButtonNewDepartment();
+    await this.fillName(department.name);
+    await this.fillSigla(department.sigla);
+    await this.departmentParent(department.departamento_pai);
+    await this.fillSectoralEmail(department.email_setorial);
+    await this.fillLocation(department.localizacao);
+    await this.fillMission(department.missao);
+    await this.fillObjectives(department.objetivos);
+    await this.clickCancel();
   }
 }
