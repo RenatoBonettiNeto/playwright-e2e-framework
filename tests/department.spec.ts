@@ -12,129 +12,116 @@ import {
 import { DepartmentPage } from "../pages/DepartmentPage";
 import { expectDepartmentPersistedAndListed } from "../helpers/expectDepartmentPersistedAndListed";
 
-test("Deve permitir cadastrar o departamento com sucesso", async ({
-  page,
-  request,
-  context,
-}) => {
+test.beforeEach(async ({ request, context }) => {
   const recruiter = createRecruiter();
   await UserApi.create(request, recruiter);
   await authenticate(request, context, recruiter);
-
-  const departmentPage = new DepartmentPage(page);
-  const department = createDepartment();
-
-  const [response] = await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url() === `${process.env.API_URL}departamentos` &&
-        response.request().method() === "POST",
-    ),
-    departmentPage.create(department),
-  ]);
-  expect(response.status()).toBe(201);
-  const { data: createdDepartment } = await response.json();
-
-  await expect(page.locator("#mensagem")).toHaveText(
-    "Departamento criado com sucesso.",
-  );
-  await expect(page.locator("#department-modal")).toBeHidden();
-
-  await expectDepartmentPersistedAndListed(
-    request,
-    departmentPage,
-    createdDepartment.id_departamento,
-    department,
-  );
 });
 
-test("Deve permitir cadastrar o departamento com somente o nome.", async ({
-  page,
-  request,
-  context,
-}) => {
-  const recruiter = createRecruiter();
-  await UserApi.create(request, recruiter);
-  await authenticate(request, context, recruiter);
+test.describe("Cenário Feliz", () => {
+  test("Deve permitir cadastrar o departamento com sucesso", async ({
+    page,
+    request,
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment();
 
-  const departmentPage = new DepartmentPage(page);
-  const department = createDepartmentOnlyWithName();
-  (await departmentPage.create(department),
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url() === `${process.env.API_URL}departamentos` &&
+          response.request().method() === "POST",
+      ),
+      departmentPage.create(department),
+    ]);
+    expect(response.status()).toBe(201);
+    const { data: createdDepartment } = await response.json();
+
     await expect(page.locator("#mensagem")).toHaveText(
       "Departamento criado com sucesso.",
-    ));
+    );
+    await expect(page.locator("#department-modal")).toBeHidden();
+
+    await expectDepartmentPersistedAndListed(
+      request,
+      departmentPage,
+      createdDepartment.id_departamento,
+      department,
+    );
+  });
+
+  test("Deve permitir cadastrar o departamento com somente o nome.", async ({
+    page,
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartmentOnlyWithName();
+
+    await departmentPage.create(department);
+    await expect(page.locator("#mensagem")).toHaveText(
+      "Departamento criado com sucesso.",
+    );
+  });
 });
 
-test("Deve cadastrar o departamento removendo espaços nas extremidades do nome.", async ({
-  page,
-  request,
-  context,
-}) => {
-  const recruiter = createRecruiter();
-  await UserApi.create(request, recruiter);
-  await authenticate(request, context, recruiter);
+test.describe("Validações", () => {
+  test("Não deve permitir cadastrar o departamento sem nome.", async ({
+    page,
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartmentWithoutName();
 
-  const departmentPage = new DepartmentPage(page);
-  const department = createDepartmentWithNameWhitespace();
+    await departmentPage.create(department);
+    await expect(page.locator("#mensagem")).toHaveText(
+      "O nome do departamento é obrigatório.",
+    );
+  });
 
-  const [response] = await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url() === `${process.env.API_URL}departamentos` &&
-        response.request().method() === "POST",
-    ),
-    departmentPage.create(department),
-  ]);
-  expect(response.status()).toBe(201);
-  const { data: createdDepartment } = await response.json();
+  test("Não deve permitir cadastrar o departamento com o nome contendo apenas espaços.", async ({
+    page,
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartmentWithNameContainingOnlySpaces();
 
-  await expect(page.locator("#mensagem")).toHaveText(
-    "Departamento criado com sucesso.",
-  );
+    await departmentPage.create(department);
+    await expect(page.locator("#mensagem")).toHaveText(
+      "O nome do departamento é obrigatório.",
+    );
+  });
+});
 
-  const expectedDepartment = {
-    ...department,
-    name: department.name.trim(),
-  };
-
-  await expectDepartmentPersistedAndListed(
+test.describe("Regras de Negócio", () => {
+  test("Deve cadastrar o departamento removendo espaços nas extremidades do nome.", async ({
+    page,
     request,
-    departmentPage,
-    createdDepartment.id_departamento,
-    expectedDepartment,
-  );
-});
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartmentWithNameWhitespace();
 
-test("Não deve permitir cadastrar o departamento sem nome.", async ({
-  page,
-  request,
-  context,
-}) => {
-  const recruiter = createRecruiter();
-  await UserApi.create(request, recruiter);
-  await authenticate(request, context, recruiter);
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url() === `${process.env.API_URL}departamentos` &&
+          response.request().method() === "POST",
+      ),
+      departmentPage.create(department),
+    ]);
+    expect(response.status()).toBe(201);
+    const { data: createdDepartment } = await response.json();
 
-  const departmentPage = new DepartmentPage(page);
-  const department = createDepartmentWithoutName();
-  (await departmentPage.create(department),
     await expect(page.locator("#mensagem")).toHaveText(
-      "O nome do departamento é obrigatório.",
-    ));
-});
+      "Departamento criado com sucesso.",
+    );
 
-test("Não deve permtir cadastrar o departamento com o nome contento apenas espaços.", async ({
-  page,
-  request,
-  context,
-}) => {
-  const recruiter = createRecruiter();
-  await UserApi.create(request, recruiter);
-  await authenticate(request, context, recruiter);
+    const expectedDepartment = {
+      ...department,
+      name: department.name.trim(),
+    };
 
-  const departmentPage = new DepartmentPage(page);
-  const department = createDepartmentWithNameContainingOnlySpaces();
-  (await departmentPage.create(department),
-    await expect(page.locator("#mensagem")).toHaveText(
-      "O nome do departamento é obrigatório.",
-    ));
+    await expectDepartmentPersistedAndListed(
+      request,
+      departmentPage,
+      createdDepartment.id_departamento,
+      expectedDepartment,
+    );
+  });
 });
