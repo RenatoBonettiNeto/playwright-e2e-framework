@@ -20,6 +20,53 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test("Deve atualizar os dados do departamento com sucesso", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment();
+    const createdDepartment = await departmentsApi.create(request, department);
+
+    const updatedDepartment = {
+      ...department,
+      name: `${department.name} atualizado`,
+      sigla: "AT",
+      email_setorial: "atualizado@rh.com.br",
+    };
+
+    await departmentPage.open();
+    await departmentPage.query.search(department.name);
+
+    const row = departmentPage.query.getRecordRow(department.name);
+    await expect(row).toHaveCount(1);
+    await row.getByRole("button", { name: "Editar", exact: true }).click();
+
+    await expect(page.locator("#department-modal")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Nome *" })).toHaveValue(
+      department.name,
+    );
+
+    await departmentPage.fillName(updatedDepartment.name);
+    await departmentPage.fillSigla(updatedDepartment.sigla);
+    await departmentPage.fillSectoralEmail(updatedDepartment.email_setorial);
+
+    await departmentPage.clickSave();
+
+    await expect(page.locator("#mensagem")).toHaveText(
+      "Departamento atualizado com sucesso.",
+    );
+    await expect(page.locator("#department-modal")).toBeHidden();
+
+    await expectDepartmentPersistedAndListed(
+      request,
+      departmentPage,
+      createdDepartment.id_departamento,
+      updatedDepartment,
+    );
+  });
+
   test("Deve cadastrar o departamento vinculado a um departamento pai", async ({
     page,
     request,
