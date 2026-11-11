@@ -12,6 +12,7 @@ import {
 import { DepartmentPage } from "../pages/DepartmentPage";
 import { expectDepartmentPersistedAndListed } from "../helpers/expectDepartmentPersistedAndListed";
 import { DepartmentsApi } from "../helpers/api/departmentApi";
+import { faker } from "@faker-js/faker";
 
 test.beforeEach(async ({ request, context }) => {
   const recruiter = createRecruiter();
@@ -20,6 +21,24 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test("Deve consultar o departamento pela sigla", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment({
+      sigla: faker.string.uuid().slice(0, 8).toUpperCase(),
+    });
+    await departmentPage.open();
+    await departmentPage.query.search(department.sigla);
+
+    await departmentPage.query.expectRecord(department.name, {
+      Nome: department.name,
+      Sigla: department.sigla,
+    });
+  });
+
   test("Deve atualizar os dados do departamento com sucesso", async ({
     page,
     request,
