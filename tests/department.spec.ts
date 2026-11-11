@@ -11,6 +11,7 @@ import {
 } from "../fixtures/department";
 import { DepartmentPage } from "../pages/DepartmentPage";
 import { expectDepartmentPersistedAndListed } from "../helpers/expectDepartmentPersistedAndListed";
+import { DepartmentsApi } from "../helpers/api/departmentApi";
 
 test.beforeEach(async ({ request, context }) => {
   const recruiter = createRecruiter();
@@ -19,6 +20,43 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test.only("Deve cadastrar o departamento vinculado a um departamento pai", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const parent = await departmentsApi.create(request, createDepartment());
+    const department = createDepartment({
+      departamento_pai: String(parent.id_departamento),
+    });
+    const departmentPage = new DepartmentPage(page);
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url() === `${process.env.API_URL}departamentos` &&
+          response.request().method() === "POST",
+      ),
+      departmentPage.create(department),
+    ]);
+    expect(response.status()).toBe(201);
+    const { data: createdDepartment } = await response.json();
+
+    await expect(page.locator("#mensagem")).toHaveText(
+      "Departamento criado com sucesso.",
+    );
+    await expect(page.locator("#department-modal")).toBeHidden();
+
+    await expectDepartmentPersistedAndListed(
+      request,
+      departmentPage,
+      createdDepartment.id_departamento,
+      department,
+      parent.id_departamento,
+    );
+    await departmentPage.expectChildInTree(parent.nome, department.name);
+  });
+
   test("Deve permitir cadastrar o departamento com sucesso", async ({
     page,
     request,

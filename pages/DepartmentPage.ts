@@ -15,6 +15,23 @@ export class DepartmentPage extends BasePage {
     await this.query.open();
   }
 
+  async expectChildInTree(parentName: string, childName: string) {
+    await this.page.getByLabel("Visualização", { exact: true }).selectOption("tree");
+
+    const tree = this.page.locator("#departments-tree");
+    const parentNode = tree.locator(".tree-node").filter({
+      has: this.page.locator(":scope > summary").getByText(parentName, { exact: true }),
+    });
+    await expect(parentNode).toHaveCount(1);
+    await expect(parentNode.locator(":scope > summary > .tree-node-name")).toBeVisible();
+
+    const childNameInTree = parentNode
+      .locator(":scope > .tree-children > .tree-node > summary")
+      .getByText(childName, { exact: true });
+    await expect(childNameInTree).toHaveCount(1);
+    await expect(childNameInTree).toBeVisible();
+  }
+
   async clickButtonNewDepartment() {
     await this.page
       .getByRole("button", {

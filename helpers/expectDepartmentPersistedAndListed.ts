@@ -8,13 +8,14 @@ export async function expectDepartmentPersistedAndListed(
   departmentPage: DepartmentPage,
   departmentId: number,
   expectedDepartment: Department,
+  expectedParentId: number | null = null,
 ) {
   const departmentQueryApi = new RecordQueryApi("departamentos");
 
   await departmentQueryApi.expectRecord(request, departmentId, {
     nome: expectedDepartment.name,
     sigla: expectedDepartment.sigla,
-    parent_departamento_id: null,
+    parent_departamento_id: expectedParentId,
     email_setorial: expectedDepartment.email_setorial,
     localizacao: expectedDepartment.localizacao,
     missao: expectedDepartment.missao,
