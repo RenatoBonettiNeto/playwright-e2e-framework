@@ -20,7 +20,7 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
-  test.only("Deve cadastrar o departamento vinculado a um departamento pai", async ({
+  test("Deve cadastrar o departamento vinculado a um departamento pai", async ({
     page,
     request,
   }) => {
