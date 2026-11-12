@@ -21,6 +21,24 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test("Deve exibir estado vazio ao buscar um departamento inexistente", async ({
+    page
+  }) => {
+    const departmentPage = new DepartmentPage(page);
+    const searchTerm = `Inexistente ${faker.string.uuid()}`;
+
+    await departmentPage.open();
+    await departmentPage.query.search(searchTerm);
+
+    await expect(page.locator("#departments-empty-state")).toBeVisible();
+    await expect(page.locator("#departments-empty-state")).toHaveText(
+      "Nenhum departamento encontrado.",
+    );
+    await expect(
+      page.locator("#departments-table-body").getByRole("row"),
+    ).toHaveCount(0);
+  });
+
   test("Deve consultar o departamento pela sigla", async ({
     page,
     request,
@@ -30,6 +48,7 @@ test.describe("Cenário Feliz", () => {
     const department = createDepartment({
       sigla: faker.string.uuid().slice(0, 8).toUpperCase(),
     });
+    await departmentsApi.create(request, department);
     await departmentPage.open();
     await departmentPage.query.search(department.sigla);
 
