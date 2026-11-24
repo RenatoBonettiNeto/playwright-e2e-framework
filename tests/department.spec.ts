@@ -12,6 +12,7 @@ import {
 import { DepartmentPage } from "../pages/DepartmentPage";
 import { expectDepartmentPersistedAndListed } from "../helpers/expectDepartmentPersistedAndListed";
 import { DepartmentsApi } from "../helpers/api/departmentApi";
+import { RecordQueryApi } from "../helpers/api/recordQueryApi";
 import { faker } from "@faker-js/faker";
 
 test.beforeEach(async ({ request, context }) => {
@@ -21,6 +22,69 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test.only("Deve inativar um departamento sem cargos ou funcionários vinculados", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentQueryApi = new RecordQueryApi("departamentos");
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment({ status: "Ativo" });
+    const createdDepartment = await departmentsApi.create(request, department);
+
+    await departmentPage.open();
+    await departmentPage.query.search(department.name);
+    await departmentPage.query.expectRecord(department.name, {
+      Status: "Ativo",
+    });
+
+    await departmentPage.clickInactivate(department.name);
+    await expect(page.locator("#department-confirm-modal")).toBeVisible();
+    await expect(page.locator("#department-confirm-title")).toHaveText(
+      "Inativar departamento",
+    );
+
+    const endpoint = new URL(
+      `departamentos/${createdDepartment.id_departamento}`,
+      process.env.API_URL,
+    ).pathname;
+    const [response] = await Promise.all([
+      page.waitForResponse((response) => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === "DELETE" && url.pathname === endpoint
+        );
+      }),
+      departmentPage.confirmInactivation(),
+    ]);
+    expect(response.ok()).toBeTruthy();
+
+    await expect(page.locator("#department-confirm-modal")).toBeHidden();
+    await expect(page.locator("#mensagem")).toHaveText("Departamento inativado.");
+
+    await departmentQueryApi.expectRecord(
+      request,
+      createdDepartment.id_departamento,
+      {
+        id_departamento: createdDepartment.id_departamento,
+        nome: department.name,
+        status: "Inativo",
+        deleted_at: null,
+        funcionarios_count: 0,
+      },
+    );
+
+    await departmentPage.query.expectRecord(department.name, {
+      Nome: department.name,
+      Status: "Inativo",
+    });
+    await expect(
+      departmentPage.query
+        .getRecordRow(department.name)
+        .getByRole("button", { name: "Reativar", exact: true }),
+    ).toBeVisible();
+  });
+
   test("Deve restaurar a consulta ao limpar os filtros de departamentos", async ({
     page,
     request,

@@ -48,6 +48,20 @@ export class DepartmentPage extends BasePage {
       .click();
   }
 
+  async clickInactivate(name: string) {
+    await this.query
+      .getRecordRow(name)
+      .getByRole("button", { name: "Inativar", exact: true })
+      .click();
+  }
+
+  async confirmInactivation() {
+    await this.page
+      .locator("#department-confirm-modal")
+      .getByRole("button", { name: "Inativar", exact: true })
+      .click();
+  }
+
   async clickButtonNewDepartment() {
     await this.page
       .getByRole("button", {
