@@ -9,6 +9,7 @@ export interface Department {
   localizacao: string;
   missao: string;
   objetivos: string;
+  status: "Ativo" | "Inativo";
 }
 
 export function createDepartment(overrides: Partial<Department> = {}): Department {
@@ -21,6 +22,7 @@ export function createDepartment(overrides: Partial<Department> = {}): Departmen
     localizacao: "Braço do Norte, Santa Catarina",
     missao: "Criar o departamento.",
     objetivos: "Criar o departamento.",
+    status: "Ativo",
     ...overrides,
   };
 }

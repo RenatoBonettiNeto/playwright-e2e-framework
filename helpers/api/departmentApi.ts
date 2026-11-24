@@ -16,6 +16,7 @@ export class DepartmentsApi {
           localizacao: department.localizacao,
           missao: department.missao,
           objetivos: department.objetivos,
+          status: department.status,
         },
       }
     );

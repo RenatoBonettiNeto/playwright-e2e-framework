@@ -21,8 +21,72 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test("Deve exibir apenas departamentos ativos ao filtrar pelo status Inativo", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentPage = new DepartmentPage(page);
+    const commonTerm = `Filtro ${faker.string.uuid()}`;
+    const activeDepartment = createDepartment({
+      name: `${commonTerm} Ativo`,
+      status: "Ativo",
+    });
+    const inactiveDepartment = createDepartment({
+      name: `${commonTerm} Inativo`,
+      status: "Inativo",
+    });
+
+    await departmentsApi.create(request, activeDepartment);
+    await departmentsApi.create(request, inactiveDepartment);
+
+    await departmentPage.open();
+    await departmentPage.query.search(commonTerm);
+    await departmentPage.filterByStatus("Inativo");
+
+    await departmentPage.query.expectRecord(inactiveDepartment.name, {
+      Status: "Inativo",
+    });
+
+    await expect(
+      departmentPage.query.getRecordRow(activeDepartment.name),
+    ).toHaveCount(0);
+  });
+
+  test("Deve exibir apenas departamentos ativos ao filtrar pelo status Ativo", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentPage = new DepartmentPage(page);
+    const commonTerm = `Filtro ${faker.string.uuid()}`;
+    const activeDepartment = createDepartment({
+      name: `${commonTerm} Ativo`,
+      status: "Ativo",
+    });
+    const inactiveDepartment = createDepartment({
+      name: `${commonTerm} Inativo`,
+      status: "Inativo",
+    });
+
+    await departmentsApi.create(request, activeDepartment);
+    await departmentsApi.create(request, inactiveDepartment);
+
+    await departmentPage.open();
+    await departmentPage.query.search(commonTerm);
+    await departmentPage.filterByStatus("Ativo");
+
+    await departmentPage.query.expectRecord(activeDepartment.name, {
+      Status: "Ativo",
+    });
+
+    await expect(
+      departmentPage.query.getRecordRow(inactiveDepartment.name),
+    ).toHaveCount(0);
+  });
+
   test("Deve exibir estado vazio ao buscar um departamento inexistente", async ({
-    page
+    page,
   }) => {
     const departmentPage = new DepartmentPage(page);
     const searchTerm = `Inexistente ${faker.string.uuid()}`;

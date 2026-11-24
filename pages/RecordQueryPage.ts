@@ -68,4 +68,30 @@ export class RecordQueryPage extends BasePage {
       await expect(row.getByRole("cell").nth(index)).toHaveText(value);
     }
   }
+  async filterByStatus(status: "Ativo" | "Inativo") {
+  const filter = this.page.locator("#filter-status");
+
+  if (await filter.inputValue() === status) return;
+
+  const endpoint = new URL(
+    "departamentos",
+    process.env.API_URL,
+  ).pathname;
+
+  const [response] = await Promise.all([
+    this.page.waitForResponse((response) => {
+      const url = new URL(response.url());
+
+      return (
+        response.request().method() === "GET" &&
+        url.pathname === endpoint &&
+        url.searchParams.get("status") === status &&
+        url.searchParams.get("tree") !== "true"
+      );
+    }),
+    filter.selectOption(status),
+  ]);
+
+  expect(response.ok()).toBeTruthy();
+}
 }
