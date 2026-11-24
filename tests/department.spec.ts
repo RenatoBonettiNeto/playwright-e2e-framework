@@ -21,6 +21,79 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test("Deve restaurar a consulta ao limpar os filtros de departamentos", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentPage = new DepartmentPage(page);
+    const commonTerm = `Filtro ${faker.string.uuid()}`;
+    const activeDepartment = createDepartment({
+      name: `${commonTerm} Ativo`,
+      status: "Ativo",
+    });
+    const inactiveDepartment = createDepartment({
+      name: `${commonTerm} Inativo`,
+      status: "Inativo",
+    });
+
+    await departmentsApi.create(request, activeDepartment);
+    await departmentsApi.create(request, inactiveDepartment);
+
+    await departmentPage.open();
+    await departmentPage.query.search(commonTerm);
+    await departmentPage.filterByStatus("Ativo");
+
+    await departmentPage.query.expectRecord(activeDepartment.name, {
+      Status: "Ativo",
+    });
+    await expect(
+      departmentPage.query.getRecordRow(inactiveDepartment.name),
+    ).toHaveCount(0);
+
+    const endpoint = new URL("departamentos", process.env.API_URL).pathname;
+    const [response] = await Promise.all([
+      page.waitForResponse((response) => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === "GET" &&
+          url.pathname === endpoint &&
+          url.searchParams.get("page") === "1" &&
+          !url.searchParams.get("q") &&
+          !url.searchParams.get("status") &&
+          url.searchParams.get("tree") !== "true"
+        );
+      }),
+      departmentPage.clearFilters(),
+    ]);
+    expect(response.ok()).toBeTruthy();
+
+    await expect(
+      page.getByRole("searchbox", { name: "Busca", exact: true }),
+    ).toHaveValue("");
+    await expect(page.locator("#filter-status")).toHaveValue("");
+    await expect(page.locator("#filter-tree-view")).toHaveValue("list");
+    await expect(page.locator("#pagination-info")).toContainText("Página 1 de");
+
+    const result = await response.json();
+    expect(result.page).toBe(1);
+
+    const rows = page.locator("#departments-table-body").getByRole("row");
+    await expect(rows).toHaveCount(result.items.length);
+
+    for (const department of result.items) {
+      const row = rows.and(
+        page.locator(`tr[data-id="${department.id_departamento}"]`),
+      );
+      await expect(row).toHaveCount(1);
+      await expect(row).toBeVisible();
+      await expect(
+        row.getByRole("cell").nth(0).locator(".table-cell-title"),
+      ).toHaveText(department.nome);
+      await expect(row.getByRole("cell").nth(4)).toHaveText(department.status);
+    }
+  });
+
   test("Deve exibir apenas departamentos ativos ao filtrar pelo status Inativo", async ({
     page,
     request,

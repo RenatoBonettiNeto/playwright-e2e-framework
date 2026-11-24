@@ -42,6 +42,12 @@ export class DepartmentPage extends BasePage {
     await this.page.locator("#filter-status").selectOption(status);
   }
 
+  async clearFilters() {
+    await this.page
+      .getByRole("button", { name: "Limpar filtros", exact: true })
+      .click();
+  }
+
   async clickButtonNewDepartment() {
     await this.page
       .getByRole("button", {
