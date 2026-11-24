@@ -22,6 +22,59 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
+  test("Deve reativar um departamento inativo", async ({ page, request }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentQueryApi = new RecordQueryApi("departamentos");
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment({ status: "Inativo" });
+    const createdDepartment = await departmentsApi.create(request, department);
+
+    await departmentPage.open();
+    await departmentPage.query.search(department.name);
+    await departmentPage.query.expectRecord(department.name, {
+      Status: "Inativo",
+    });
+
+    const endpoint = new URL(
+      `departamentos/${createdDepartment.id_departamento}/restaurar`,
+      process.env.API_URL,
+    ).pathname;
+    const [response] = await Promise.all([
+      page.waitForResponse((response) => {
+        const url = new URL(response.url());
+        return (
+          response.request().method() === "PATCH" && url.pathname === endpoint
+        );
+      }),
+      departmentPage.clickReactivate(department.name),
+    ]);
+    expect(response.ok()).toBeTruthy();
+
+    await expect(page.locator("#mensagem")).toHaveText("Departamento reativado.");
+
+    await departmentQueryApi.expectRecord(
+      request,
+      createdDepartment.id_departamento,
+      {
+        id_departamento: createdDepartment.id_departamento,
+        nome: department.name,
+        status: "Ativo",
+        deleted_at: null,
+        funcionarios_count: 0,
+      },
+    );
+
+    await departmentPage.query.expectRecord(department.name, {
+      Nome: department.name,
+      Status: "Ativo",
+    });
+    await expect(
+      departmentPage.query
+        .getRecordRow(department.name)
+        .getByRole("button", { name: "Inativar", exact: true }),
+    ).toBeVisible();
+  });
+
   test("Deve inativar um departamento sem cargos ou funcionários vinculados", async ({
     page,
     request,
