@@ -22,7 +22,7 @@ test.beforeEach(async ({ request, context }) => {
 });
 
 test.describe("Cenário Feliz", () => {
-  test.only("Deve inativar um departamento sem cargos ou funcionários vinculados", async ({
+  test("Deve inativar um departamento sem cargos ou funcionários vinculados", async ({
     page,
     request,
   }) => {
