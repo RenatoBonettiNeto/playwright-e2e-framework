@@ -69,6 +69,13 @@ export class DepartmentPage extends BasePage {
       .click();
   }
 
+  async cancelConfirmation() {
+    await this.page
+      .locator("#department-confirm-modal")
+      .getByRole("button", { name: "Cancelar", exact: true })
+      .click();
+  }
+
   async clickButtonNewDepartment() {
     await this.page
       .getByRole("button", {

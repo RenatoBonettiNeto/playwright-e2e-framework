@@ -467,6 +467,57 @@ test.describe("Validações", () => {
 });
 
 test.describe("Regras de Negócio", () => {
+  test.only("Não deve inativar o departamento ao cancelar a confirmação", async ({
+    page,
+    request,
+  }) => {
+    const departmentsApi = new DepartmentsApi();
+    const departmentQueryApi = new RecordQueryApi("departamentos");
+    const departmentPage = new DepartmentPage(page);
+    const department = createDepartment({ status: "Ativo" });
+    const createdDepartment = await departmentsApi.create(request, department);
+    const originalDepartment = await departmentQueryApi.getById(
+      request,
+      createdDepartment.id_departamento,
+    );
+    expect(originalDepartment.status).toBe("Ativo");
+
+    await departmentPage.open();
+    await departmentPage.query.search(department.name);
+    await departmentPage.query.expectRecord(department.name, {
+      Status: "Ativo",
+    });
+
+    await departmentPage.clickInactivate(department.name);
+    await expect(page.locator("#department-confirm-modal")).toBeVisible();
+    await expect(page.locator("#department-confirm-title")).toHaveText(
+      "Inativar departamento",
+    );
+
+    await departmentPage.cancelConfirmation();
+    await expect(page.locator("#department-confirm-modal")).toBeHidden();
+
+    const savedDepartment = await departmentQueryApi.getById(
+      request,
+      createdDepartment.id_departamento,
+    );
+    expect(savedDepartment).toEqual(originalDepartment);
+
+    await departmentPage.open();
+    await departmentPage.query.search(department.name);
+    await departmentPage.query.expectRecord(department.name, {
+      Nome: department.name,
+      Sigla: department.sigla,
+      "E-mail setorial": department.email_setorial,
+      Status: "Ativo",
+    });
+    await expect(
+      departmentPage.query
+        .getRecordRow(department.name)
+        .getByRole("button", { name: "Inativar", exact: true }),
+    ).toBeVisible();
+  });
+
   test("Deve cadastrar o departamento removendo espaços nas extremidades do nome.", async ({
     page,
     request,
