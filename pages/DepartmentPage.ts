@@ -76,6 +76,13 @@ export class DepartmentPage extends BasePage {
       .click();
   }
 
+  async clickDelete() {
+    await this.page
+      .locator("#department-modal")
+      .getByRole("button", { name: "Excluir", exact: true })
+      .click();
+  }
+
   async clickButtonNewDepartment() {
     await this.page
       .getByRole("button", {
